@@ -254,28 +254,41 @@ public class Messenger {
             System.out.println("---------");
             System.out.println("1. Create user");
             System.out.println("2. Log in");
+            System.out.println("6. *DEV* Auto log in Norma");
             System.out.println("9. < EXIT");
             String authorisedUser = null;
             switch (readChoice()){
                case 1: CreateUser(esql); break;
                case 2: authorisedUser = LogIn(esql); break;
+               case 6: authorisedUser = LogInNorma(esql); break;
                case 9: keepon = false; break;
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
             if (authorisedUser != null) {
+              System.out.println(authorisedUser);
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
                 System.out.println("---------");
-                System.out.println("1. Add to contact list");
-                System.out.println("2. Browse contact list");
-                System.out.println("3. Write a new message");
+                System.out.println("0. Delete your account");
+                System.out.println("1. Browse contact list");
+                System.out.println("2. Add to contact list");
+                System.out.println("3. Remove from contact list");
+                System.out.println("4. Browse blocked list");
+                System.out.println("5. Add to blocked list");
+                System.out.println("6. Remove from blocked list");
+                System.out.println("8. Write a new message");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
-                   case 1: AddToContact(esql); break;
-                   case 2: ListContacts(esql); break;
-                   case 3: NewMessage(esql); break;
+                   case 0: break;
+                   case 1: ListContacts(esql); break;
+                   case 2: AddToContact(esql); break;
+                   case 3: break;
+                   case 4: break;
+                   case 5: break;
+                   case 6: break;
+                   case 8: NewMessage(esql); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
                 }
@@ -366,9 +379,31 @@ public class Messenger {
 
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
-	 if (userNum > 0)
-		return login;
+	 if (userNum > 0){
+        System.out.println(userNum);
+        return login;
+     }
          return null;
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return null;
+      }
+   }//end
+
+   /* So I don't have to type in a login each time I run the program. HACK*/
+   public static String LogInNorma(Messenger esql){
+      try{
+         String login = new String("Norma");
+         String password = new String("8c0bb848dc6691e9e8580f1b5eff110880d3");
+         System.out.println("Norma logged in");
+
+         String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
+         int userNum = esql.executeQuery(query);
+	 if (userNum > 0){
+         System.out.println(userNum);
+		return login;
+     }
+        return null;
       }catch(Exception e){
          System.err.println (e.getMessage ());
          return null;
