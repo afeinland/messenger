@@ -245,6 +245,7 @@ public class Messenger {
          String dbname = args[0];
          String dbport = args[1];
          String user = args[2];
+         System.out.println(user);
          esql = new Messenger (dbname, dbport, user, "");
 
          boolean keepon = true;
@@ -265,7 +266,7 @@ public class Messenger {
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
             if (authorisedUser != null) {
-              System.out.println(authorisedUser);
+              System.out.format("Welcome %s!\n", authorisedUser);
               boolean usermenu = true;
               while(usermenu) {
                 System.out.println("MAIN MENU");
@@ -281,7 +282,10 @@ public class Messenger {
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
-                   case 0: break;
+                   case 0:
+                      DeleteUser(esql, authorisedUser);
+                      usermenu = false;
+                      break;
                    case 1: ListContacts(esql); break;
                    case 2: AddToContact(esql); break;
                    case 3: break;
@@ -366,6 +370,26 @@ public class Messenger {
       }
    }//end
    
+   public static String DeleteUser(Messenger esql, String login){    
+      try{
+         System.out.print("Are you sure you want to delete your account? (Y/N): ");
+         // TODO Check for info linked to this account.
+         // TODO Require user to enter password.
+         String answer = in.readLine();
+         switch (answer) {
+            case "Y":
+                String query = String.format("DELETE FROM usr WHERE login='%s'", login);
+                esql.executeUpdate(query);
+                break;
+            case "N": break;
+            default:  break;
+         }
+      }catch (Exception e){
+         // ignored.
+      }// end try
+      return null;
+   }// end DeletUser
+
    /*
     * Check log in credentials for an existing user
     * @return User login or null is the user does not exist
@@ -395,14 +419,11 @@ public class Messenger {
       try{
          String login = new String("Norma");
          String password = new String("8c0bb848dc6691e9e8580f1b5eff110880d3");
-         System.out.println("Norma logged in");
-
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
-	 if (userNum > 0){
-         System.out.println(userNum);
-		return login;
-     }
+         if (userNum > 0){
+            return login;
+         }
         return null;
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -411,6 +432,7 @@ public class Messenger {
    }//end
 
    public static void AddToContact(Messenger esql){
+      System.out.println("CATS");
       // Your code goes here.
       // ...
       // ...
