@@ -283,8 +283,9 @@ public class Messenger {
                 System.out.println("9. Log out");
                 switch (readChoice()){
                    case 0:
-                      DeleteUser(esql, authorisedUser);
-                      usermenu = false;
+                      if(DeleteUser(esql, authorisedUser) > 0){
+                         usermenu = false;
+                      }
                       break;
                    case 1: ListContacts(esql); break;
                    case 2: AddToContact(esql); break;
@@ -369,25 +370,49 @@ public class Messenger {
          System.err.println (e.getMessage ());
       }
    }//end
+
+   /* Checks if the user is the owner of any chats, or TBD. */
+   public static boolean linkedInfo(Messenger esql, String user){
+      try{
+          String query = String.format("SELECT * FROM chat WHERE init_sender='%s'", user);
+          int hasChat = esql.executeQuery(query);
+          return hasChat > 0;
+      }catch (Exception e){
+         // ignored.
+      }
+      return false;
+   }// end
    
-   public static String DeleteUser(Messenger esql, String login){    
+   public static int DeleteUser(Messenger esql, String user){    
+      int userDeleted = 0;
       try{
          System.out.print("Are you sure you want to delete your account? (Y/N): ");
-         // TODO Check for info linked to this account.
-         // TODO Require user to enter password.
          String answer = in.readLine();
+         // TODO Require user to enter password.
          switch (answer) {
             case "Y":
-                String query = String.format("DELETE FROM usr WHERE login='%s'", login);
-                esql.executeUpdate(query);
-                break;
-            case "N": break;
-            default:  break;
+               if (linkedInfo(esql, user)) {
+                  System.out.println("Your account is the owner of a chat and cannot be deleted.");
+                  userDeleted = 0; // User cannot be deleted.
+                  break;
+               }
+               String query = String.format("DELETE FROM usr WHERE login='%s'", user);
+               esql.executeUpdate(query);
+               System.out.println("Your account was deleted.");
+               userDeleted = 1;
+               break;
+            case "N":
+               userDeleted = 0; // User not deleted.
+               break;
+            default:
+               System.out.println("Invalid option. Your account will not be deleted.");
+               userDeleted = 0; // User not deleted.
+               break;
          }
       }catch (Exception e){
          // ignored.
       }// end try
-      return null;
+      return userDeleted; // User successfully deleted.
    }// end DeletUser
 
    /*
@@ -404,7 +429,6 @@ public class Messenger {
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
 	 if (userNum > 0){
-        System.out.println(userNum);
         return login;
      }
          return null;
