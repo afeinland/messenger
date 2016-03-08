@@ -256,12 +256,14 @@ public class Messenger {
             System.out.println("1. Create user");
             System.out.println("2. Log in");
             System.out.println("6. *DEV* Auto log in Norma");
+ 			System.out.println("7. Test Chat");
             System.out.println("9. < EXIT");
             String authorisedUser = null;
             switch (readChoice()){
                case 1: CreateUser(esql); break;
                case 2: authorisedUser = LogIn(esql); break;
                case 6: authorisedUser = LogInNorma(esql); break;
+			   case 7: ChatMenu(esql); break;
                case 9: keepon = false; break;
                default : System.out.println("Unrecognized choice!"); break;
             }//end switch
@@ -278,6 +280,7 @@ public class Messenger {
                 System.out.println("4. Browse blocked list");
                 System.out.println("5. Add to blocked list");
                 System.out.println("6. Remove from blocked list");
+				System.out.println("7. View chats list");
                 System.out.println("8. Write a new message");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
@@ -293,6 +296,7 @@ public class Messenger {
                    case 4: break;
                    case 5: break;
                    case 6: break;
+				   case 7: ChatMenu(esql); break;
                    case 8: NewMessage(esql); break;
                    case 9: usermenu = false; break;
                    default : System.out.println("Unrecognized choice!"); break;
@@ -480,5 +484,59 @@ public class Messenger {
       // ...
       // ...
    }//end Query6
+
+	public static void ChatMenu(Messenger esql){
+      try{
+              System.out.format("Welcome!\n");
+              boolean chatmenu = true;
+			  
+              while(chatmenu) {
+                System.out.println("CHAT MENU");
+                System.out.println("---------");
+                System.out.println("0. List Chats");
+                System.out.println("1. Delete Chats");
+                System.out.println("2. Add Member to Chat");
+                System.out.println("3. Delete Member from Chat");
+                System.out.println("5. Go to Message Menu");
+                System.out.println(".........................");
+                System.out.println("9. Previous Menu");
+                switch (readChoice()){
+                   case 0: break;
+				   case 5: MessageMenu(esql); break;
+                   case 9: chatmenu = false; break;
+                   default : System.out.println("Unrecognized choice!"); break;
+                }
+              }
+
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end
+
+   public static void MessageMenu(Messenger esql){
+      try{
+              boolean MessageMenu = true;
+              while(MessageMenu) {
+                System.out.println("Message Menu");
+                System.out.println("---------");
+                System.out.println("0. Add Message");
+                System.out.println("1. Edit Message");
+                System.out.println("2. Delete Message");
+                System.out.println("3. Display Chat Messages");
+                System.out.println("4. Load More Chat Messages");
+                System.out.println(".........................");
+                System.out.println("9. Previous Menu");
+                switch (readChoice()){
+                   case 0: break;
+                   case 9: MessageMenu = false; break;
+                   default : System.out.println("Unrecognized choice!"); break;
+                }
+              }
+
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end
+
 
 }//end Messenger
